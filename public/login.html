@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión - Rucoy Market</title>
+  <link rel="stylesheet" href="login.css">
+  <style>
+  .error {
+    color: #ff4d4d;
+    background-color: #ffe5e5;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #ff9999;
+  }
+  
+</style>
+</head>
+<body>
+  <nav class="navbar"></nav>
+
+  <div id="authContainer">
+    <!-- Sección de Inicio de Sesión -->
+    <div id="loginSection">
+      <h2>Inicia sesión</h2>
+      <input type="email" id="loginEmail" placeholder="Correo" required>
+      <input type="password" id="loginPassword" placeholder="Contraseña" required>
+<p id="loginResponse" class="response-message"></p>
+      <button onclick="login()">Iniciar sesión</button>
+   
+      <p class="switch">¿No tienes una cuenta? <a href="#" onclick="showRegister()">Regístrate</a></p>
+    </div>
+
+    <!-- Sección de Registro -->
+    <div id="registerSection" style="display: none;">
+      <h2>Crea tu cuenta</h2>
+      <input type="text" id="regUsername" placeholder="Usuario" required>
+      <input type="email" id="regEmail" placeholder="Correo" required>
+      <input type="password" id="regPassword" placeholder="Contraseña" required>
+
+      <label class="terms">
+        <input type="checkbox" id="acceptTerms" required> Acepto los <a href="#">términos y condiciones</a>
+      </label>
+      <p id="registerResponse" class="response-message"></p>
+      <button onclick="register()">Crear cuenta</button>
+      <p class="switch">¿Ya tienes una cuenta? <a href="#" onclick="showLogin()">Inicia sesión</a></p>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+  <script>
+    function showRegister() {
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("registerSection").style.display = "block";
+    }
+    function showLogin() {
+      document.getElementById("registerSection").style.display = "none";
+      document.getElementById("loginSection").style.display = "block";
+    }
+  </script>
+</body>
+</html>

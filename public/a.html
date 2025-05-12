@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Administrador de Publicaciones e Imágenes</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; text-align: center; }
+    .seccion { margin-top: 40px; }
+    table { margin: auto; border-collapse: collapse; width: 95%; }
+    th, td { border: 1px solid #ccc; padding: 5px; }
+    input[type="text"], input[type="number"] { width: 100%; }
+    .img-container { display: inline-block; margin: 10px; border: 1px solid #ccc; padding: 10px; }
+    img { max-width: 150px; height: auto; display: block; margin-bottom: 5px; }
+    button { margin: 5px; padding: 5px 10px; cursor: pointer; }
+    .nombre { font-size: 0.9em; margin: 5px 0; word-break: break-all; }
+    #contenido { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Acceso de Administrador</h1>
+  <input type="password" id="clave" placeholder="Ingrese clave..." />
+  <button onclick="verificarClave()">Entrar</button>
+
+  <div id="contenido">
+    <div class="seccion">
+      <h2>Editor de Publicaciones</h2>
+      <table id="tabla">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Precio</th>
+            <th>Número</th>
+            <th>Nombre en juego</th>
+            <th>Imagen</th>
+            <th>Fecha</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button onclick="guardarCambios()">Guardar Cambios</button>
+    </div>
+
+    <div class="seccion">
+      <h2>Gestión de Imágenes</h2>
+      <div id="galeria"></div>
+    </div>
+  </div>
+
+  <script>
+    const CLAVE_CORRECTA = "180608";
+
+    function verificarClave() {
+      const clave = document.getElementById("clave").value;
+      if (clave === CLAVE_CORRECTA) {
+        document.getElementById("contenido").style.display = "block";
+        document.getElementById("clave").style.display = "none";
+        event.target.style.display = "none";
+        cargarDatos();
+        cargarImagenes();
+      } else {
+        alert("Clave incorrecta");
+      }
+    }
+
+    // Editor de publicaciones
+    let datos = [];
+    async function cargarDatos() {
+      const res = await fetch("/datos");
+      datos = await res.json();
+      renderizarTabla();
+    }
+
+    function renderizarTabla() {
+      const tbody = document.querySelector("#tabla tbody");
+      tbody.innerHTML = "";
+      datos.forEach((item, i) => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td><input value="${item.item}" onchange="actualizar(${i}, 'item', this.value)"></td>
+          <td><input value="${item.precio}" onchange="actualizar(${i}, 'precio', this.value)"></td>
+          <td><input value="${item.numero}" onchange="actualizar(${i}, 'numero', this.value)"></td>
+          <td><input value="${item.nombre_juego || ''}" onchange="actualizar(${i}, 'nombre_juego', this.value)"></td>
+          <td><input value="${item.imagen}" onchange="actualizar(${i}, 'imagen', this.value)"></td>
+          <td><input value="${item.fecha}" onchange="actualizar(${i}, 'fecha', this.value)"></td>
+          <td><button onclick="eliminar(${i})">Eliminar</button></td>
+        `;
+        tbody.appendChild(fila);
+      });
+    }
+
+    function actualizar(index, campo, valor) {
+      datos[index][campo] = valor;
+    }
+
+    function eliminar(index) {
+      if (confirm("¿Estás seguro de eliminar esta publicación?")) {
+        datos.splice(index, 1);
+        renderizarTabla();
+      }
+    }
+
+    async function guardarCambios() {
+      await fetch("/editar-datos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos)
+      });
+      alert("Cambios guardados correctamente.");
+    }
+
+    // Gestor de imágenes
+    async function cargarImagenes() {
+      const res = await fetch("/listar-imagenes");
+      const archivos = await res.json();
+      const galeria = document.getElementById("galeria");
+      galeria.innerHTML = "";
+
+      archivos.forEach(nombre => {
+        const div = document.createElement("div");
+        div.className = "img-container";
+        div.innerHTML = `
+          <img src="/uploads/${nombre}" alt="${nombre}" />
+          <div class="nombre">${nombre}</div>
+          <button onclick="eliminarImagen('${nombre}')">Eliminar</button>
+          <input type="file" accept="image/*" onchange="reemplazarImagen(event, '${nombre}')" />
+        `;
+        galeria.appendChild(div);
+      });
+    }
+
+    async function eliminarImagen(nombre) {
+      const res = await fetch("/eliminar-imagen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombre })
+      });
+      if (res.ok) {
+        alert("Imagen eliminada");
+        cargarImagenes();
+      } else {
+        alert("Error al eliminar");
+      }
+    }
+
+    async function reemplazarImagen(event, nombreOriginal) {
+      const archivo = event.target.files[0];
+      if (!archivo) return;
+
+      const formData = new FormData();
+      formData.append("imagen", archivo);
+      formData.append("nombre", nombreOriginal);
+
+      const res = await fetch("/reemplazar-imagen", {
+        method: "POST",
+        body: formData
+      });
+
+      if (res.ok) {
+        alert("Imagen reemplazada");
+        cargarImagenes();
+      } else {
+        alert("Error al reemplazar la imagen");
+      }
+    }
+  </script>
+</body>
+</html>

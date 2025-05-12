@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión - Rucoy Market</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <nav class="navbar">
+  </nav>
+
+  <div id="authContainer">
+    <!-- Sección de Inicio de Sesión -->
+    <div id="loginSection">
+      <h2>Inicia sesión</h2>
+      <input type="email" id="loginEmail" placeholder="Correo" required>
+      <input type="password" id="loginPassword" placeholder="Contraseña" required>
+
+      <div class="extras">
+        <label><input type="checkbox" id="rememberMe"> Recuérdame</label>
+        <a href="#" class="forgot">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button onclick="login()">Iniciar sesión</button>
+      <p id="loginResponse"></p>
+      <p class="switch">¿No tienes una cuenta? <a href="#" onclick="showRegister()">Regístrate</a></p>
+    </div>
+
+    <!-- Sección de Registro -->
+    <div id="registerSection" style="display: none;">
+      <h2>Crea tu cuenta</h2>
+      <input type="text" id="regUsername" placeholder="Usuario" required>
+      <input type="email" id="regEmail" placeholder="Correo" required>
+      <input type="password" id="regPassword" placeholder="Contraseña" required>
+
+      <label class="terms">
+        <input type="checkbox" id="acceptTerms" required> Acepto los <a href="#">términos y condiciones</a>
+      </label>
+
+      <button onclick="register()">Crear cuenta</button>
+      <p id="registerResponse"></p>
+      <p class="switch">¿Ya tienes una cuenta? <a href="#" onclick="showLogin()">Inicia sesión</a></p>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+  <script>
+    function showRegister() {
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("registerSection").style.display = "block";
+    }
+    function showLogin() {
+      document.getElementById("registerSection").style.display = "none";
+      document.getElementById("loginSection").style.display = "block";
+    }
+  </script>
+</body>
+</html>

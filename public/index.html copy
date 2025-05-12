@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rucoy Market</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ENCABEZADO -->
+  <header class="header">
+    <h1>Rucoy Market</h1>
+    <div class="header-buttons">
+      <input type="text" id="buscador" placeholder="Buscar productos..." />
+      <button id="publicacionesBtn">Publicaciones</button>
+      <button id="publicarBtn">+ Publicar</button>
+      <button id="perfilBtn">Perfil</button>
+    </div>
+  </header>
+
+  <!-- PANEL DE USUARIO -->
+  <aside id="userData" class="user-panel hidden"></aside>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="main-content">
+    <!-- PUBLICACIONES -->
+    <section id="productosContainer" class="productos"></section>
+
+    <!-- FORMULARIO DE PUBLICACIÓN -->
+    <div id="formularioContainer" class="modal hidden">
+      <form id="formulario" method="POST" enctype="multipart/form-data">
+        <h2>Publicar</h2>
+        <input type="text" name="item" placeholder="Nombre del producto" required />
+        <input type="number" name="precio" placeholder="Precio ($)" required />
+        <input type="text" name="numero" placeholder="Número de WhatsApp" required />
+        <input type="text" name="nombre_juego" placeholder="Nombre en el juego (opcional)" />
+        <label><strong>Imagen:</strong></label>
+        <input type="file" name="imagen" accept="image/*" required />
+        <div class="form-buttons">
+          <button type="submit">Publicar</button>
+          <button type="button" id="cerrarForm">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ADVERTENCIA SIN SESIÓN -->
+    <div id="advertencia" class="advertencia hidden">
+      Necesitas iniciar sesión para publicar.
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+<script>
+  async function showUserData() {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return window.location.href = "login.html";
+
+    const res = await fetch(`/getUserData/${userId}`);
+    if (!res.ok) return logout();
+    const user = await res.json();
+
+    document.getElementById("userData").innerHTML = `
+      <h3>Bienvenido, ${user.username}</h3>
+      <p>Coins: ${user.coins}</p>
+      <p>Correo: ${user.email}</p>
+      <p>Verificado: ${user.verified ? "Sí" : "No"}</p>
+      <input type="text" id="newUsername" placeholder="Nuevo nombre">
+      <button onclick="editUsername('${user.username}')">Editar nombre</button>
+      <p id="editResponse"></p>
+      <button onclick="deleteAccount('${user._id}')">Eliminar cuenta</button>
+      <button onclick="logout()">Cerrar sesión</button>
+    `;
+  }
+
+  async function editUsername(userId) {
+    const newUsername = document.getElementById("newUsername").value;
+    const res = await fetch("/edit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: localStorage.getItem("userEmail"), newUsername })
+    });
+    const msg = await res.text();
+    document.getElementById("editResponse").textContent = msg;
+    if (msg.includes("Actualizado")) showUserData();
+  }
+
+  async function deleteAccount(userId) {
+    if (!confirm("¿Eliminar cuenta?")) return;
+    const res = await fetch("/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }) // nombre correcto
+    });
+    alert("\n" + await res.text());
+    logout();
+  }
+
+  function logout() {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userEmail");
+    window.location.href = "login.html";
+  }
+
+  window.onload = showUserData;
+</script>
+  <script src="nav.js"></script>
+</body>
+</html>
