@@ -1,0 +1,141 @@
+/* login.css */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f0f2f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#authContainer {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #1877f2;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #dddfe2;
+  border-radius: 6px;
+  background-color: #f5f6f7;
+  transition: border 0.2s;
+}
+
+input:focus {
+  border-color: #1877f2;
+  outline: none;
+  background-color: #fff;
+}
+
+button {
+  width: 100%;
+  background-color: #1877f2;
+  color: white;
+  padding: 12px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #155ecb;
+}
+
+p {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: #606770;
+}
+
+p.switch {
+  margin-top: 20px;
+}
+
+p.switch a {
+  color: #1877f2;
+  text-decoration: none;
+}
+
+p.switch a:hover {
+  text-decoration: underline;
+}
+
+.extras {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.extras label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.forgot {
+  color: #1877f2;
+  text-decoration: none;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+.terms {
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.terms a {
+  color: #1877f2;
+  text-decoration: none;
+}
+
+.terms a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+    height: auto;
+  }
+
+  #authContainer {
+    margin-top: 40px;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+.response-message {
+  color: red;
+  font-weight: bold;
+}

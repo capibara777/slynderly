@@ -1,0 +1,52 @@
+async function register() {
+  const username = document.getElementById("regUsername").value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+
+  const res = await fetch("/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, email, password })
+  });
+
+  const text = await res.text();
+  document.getElementById("registerResponse").textContent = text;
+}
+
+async function login() {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  const res = await fetch("/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+  const responseElement = document.getElementById("loginResponse");
+
+  // Si el login es exitoso, redirigir al usuario
+  if (data.success) {
+    localStorage.setItem("userId", data.user._id);
+    window.location.href = "index.html";
+  } else {
+    // Mostrar el mensaje y aplicar una clase según el tipo de error
+    responseElement.textContent = data.message;
+
+    // Limpiar cualquier clase anterior
+    responseElement.classList.remove('success', 'error');
+
+    // Agregar la clase adecuada para el mensaje de error
+    if (data.message === "Correo no registrado." || data.message === "Cuenta no verificada." || data.message === "Contraseña incorrecta.") {
+      responseElement.classList.add('error');
+    } else {
+      responseElement.classList.add('success');
+    }
+  }
+}
+
+window.onload = () => {
+  const userId = localStorage.getItem("userId");
+  if (userId) window.location.href = "index.html";
+};
